@@ -4,7 +4,8 @@ This repository contains a Flask web application that allows users to upload PDF
 
 ## Interface
 
-![Document-Ask Chat Interface](screenshots/interface_screenshot.png)
+![Document-Ask Upload Interface](https://github.com/Angitha10/Document-Ask/blob/main/Upload_Page.png)
+![Document-Ask Chat Interface](https://github.com/Angitha10/Document-Ask/blob/main/Chat_Page.png)
 
 ## Features
 - Upload PDF documents.
