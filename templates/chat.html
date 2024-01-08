@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 80%;
+            margin: auto;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background-color: #fff;
+            height: 100%; /* Set container height to 100% */
+        }
+
+        .preview-box,
+        .chat-box {
+            flex-grow: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            height: 100%; /* Each box takes equal space */
+        }
+
+        .preview {
+            padding: 20px;
+            border-right: 1px solid #ddd; /* Divider between image box and chat section */
+            height: 100%;
+        }
+
+        .preview img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .chat-section {
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .chat-section h2 {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #3a75e8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="preview-box">
+            <div class="preview">
+                <!-- Remove the display of the original name -->
+                <img src="{{ preview_image }}" alt="PDF Preview">
+            </div>
+        </div>
+
+        <div class="chat-box">
+            <div class="chat-section">
+                <h2>Chat History</h2>
+                <ul id="chat-history">
+                    <!-- Chat messages will be dynamically added here -->
+                </ul>
+
+                <h2>Send Message</h2>
+                <form id="message-form">
+                    <input type="text" id="user-message" name="user_message" placeholder="Type your message...">
+                    <button type="button" onclick="sendMessage()">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('server_response', function(response) {
+            appendMessage(response, 'server');
+        });
+
+        function sendMessage() {
+            var userMessage = document.getElementById('user-message').value;
+            appendMessage(userMessage, 'user');
+            document.getElementById('user-message').value = '';
+
+            // Emit the user message to the server
+            socket.emit('user_message', userMessage);
+        }
+
+        // Enable 'Enter' key to submit the form
+        document.getElementById('user-message').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();  // Prevent the default action (form submission)
+                sendMessage();        // Call the sendMessage function
+            }
+        });
+
+        function appendMessage(message, sender) {
+            var chatHistory = document.getElementById('chat-history');
+            var listItem = document.createElement('li');
+            listItem.innerText = '[' + sender + '] ' + message;
+            chatHistory.appendChild(listItem);
+        }
+    </script>
+</body>
+</html>
