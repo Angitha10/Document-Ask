@@ -72,7 +72,7 @@ def process(filename):
     
 @socketio.on('user_message')
 def handle_user_message(message):
-    # Implement a more advanced response logic
+    
     response = get_response_from_context(message)
     socketio.emit('server_response', response)
 
